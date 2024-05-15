@@ -14,7 +14,7 @@ struct PersistenceController {
         container = NSPersistentContainer(name: "MyCoreData")
 
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
-            if let error as NSError? {
+            if let error = error as NSError? {
                 fatalError("unresolved error \(error)")
             }
         })

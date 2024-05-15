@@ -12,7 +12,7 @@ struct MyCoreDataApp: App {
     let persistenceController = PersistenceController()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView().environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 }
