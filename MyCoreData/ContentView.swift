@@ -11,28 +11,53 @@ import CoreData
 struct ContentView: View {
     @Environment(\.managedObjectContext) var viewContext
     @FetchRequest(sortDescriptors: []) var humans : FetchedResults<Human>
+    @State var name = ""
     var body: some View {
         List{
-            Button(action: addHuman) {
-              Text("人間を増やす")
-          }
+            TextField("人間の名前", text: $name).onSubmit{addHuman()}
+            Button(action: deleteHuman) {
+                Text("人間を減らす")
+            }
             ForEach(humans) { human in
                 if((human.name?.isEmpty) == false) {
-                    Text(human.name!)
+                    HStack {
+                        if(human.checked){
+                            Text("☑️")
+                        } else {
+                            Text("⬜️")
+                        }
+                        Button(action: {
+                            human.checked.toggle()
+                        }){
+                            Text(human.name!)
+                        }
+                    }
                 }
                 
             }
         }
     }
-
     func addHuman() {
         let newhuman = Human(context: viewContext)
-        newhuman.name = "ichikawa"
+        newhuman.name = name
 
         do {
             try viewContext.save()
         } catch {
             fatalError("保存に失敗")
+        }
+        name = ""
+    }
+    func deleteHuman() {
+        for human in humans {
+            if(human.checked) {
+                viewContext.delete(human)
+            }
+        }
+        do{
+            try viewContext.save()
+        } catch {
+            fatalError("セーブに失敗")
         }
     }
 }
